@@ -46,9 +46,20 @@ def predict_heart_disease(patient: PatientData):
         raise HTTPException(status_code=503, detail="Model not loaded")
     
     model = MODELS["classification"]
-    input_data = [[patient.age, patient.bmi, patient.blood_pressure, patient.glucose]]
-    prediction = model.predict(input_data)[0]
-    probability = model.predict_proba(input_data)[0][1]
+    # Create DataFrame with proper column names to avoid warnings
+    input_df = pd.DataFrame([{
+        'age': patient.age,
+        'bmi': patient.bmi,
+        'blood_pressure': patient.blood_pressure,
+        'glucose': patient.glucose
+    }])
+    
+    prediction = model.predict(input_df)[0]
+    # Check if the model has predict_proba (GradientBoosting does)
+    if hasattr(model, "predict_proba"):
+        probability = model.predict_proba(input_df)[0][1]
+    else:
+        probability = float(prediction) # Fallback
     
     return {
         "heart_disease_prediction": int(prediction),
@@ -61,8 +72,14 @@ def predict_cost(patient: PatientData):
         raise HTTPException(status_code=503, detail="Model not loaded")
     
     model = MODELS["regression"]
-    input_data = [[patient.age, patient.bmi, patient.blood_pressure, patient.glucose]]
-    prediction = model.predict(input_data)[0]
+    input_df = pd.DataFrame([{
+        'age': patient.age,
+        'bmi': patient.bmi,
+        'blood_pressure': patient.blood_pressure,
+        'glucose': patient.glucose
+    }])
+    
+    prediction = model.predict(input_df)[0]
     
     return {"estimated_hospital_cost": float(prediction)}
 
@@ -72,7 +89,13 @@ def predict_cluster(patient: PatientData):
         raise HTTPException(status_code=503, detail="Model not loaded")
         
     model = MODELS["clustering"]
-    input_data = [[patient.age, patient.bmi, patient.blood_pressure, patient.glucose]]
-    cluster = model.predict(input_data)[0]
+    input_df = pd.DataFrame([{
+        'age': patient.age,
+        'bmi': patient.bmi,
+        'blood_pressure': patient.blood_pressure,
+        'glucose': patient.glucose
+    }])
+    
+    cluster = model.predict(input_df)[0]
     
     return {"patient_segment_cluster": int(cluster)}
