@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  fastapi_app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - ENV=development
+
+  prefect_server:
+    image: prefecthq/prefect:2-latest
+    command: prefect server start
+    ports:
+      - "4200:4200"
+    environment:
+      - PREFECT_API_URL=http://0.0.0.0:4200/api
