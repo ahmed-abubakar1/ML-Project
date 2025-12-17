@@ -14,7 +14,7 @@ This project implements a full-stack ML Engineering system with:
 ## Structure
 - `app/`: FastAPI application (`main.py`) and Web UI (`static/`).
 - `ml/`: Machine Learning scripts:
-    - `train_models.py`: Generates synthetic data and trains 3 models.
+    - `train_models.py`: Fetches **Live Data** (Pima Indians Dataset) and trains 3 models.
     - `validate.py`: Checks for data integrity and drift.
 - `prefect_flows/`: Prefect workflows (`pipeline.py`).
 - `models/`: Serialized model files (.pkl).
