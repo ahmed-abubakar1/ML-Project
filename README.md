@@ -5,14 +5,14 @@
 
 ## Project Overview
 This project implements a full-stack ML Engineering system with:
-- **FastAPI**: Serving real-time predictions for Heart Disease (Classification), Hospital Costs (Regression), and Patient Segments (Clustering).
+- **FastAPI**: Serving real-time predictions and a **Web UI** for user interaction.
 - **GitHub Actions**: CI/CD pipeline for automated testing and docker builds.
 - **Prefect**: Orchestration of data ingestion, training, and evaluation pipelines.
 - **Automated Validation**: Scripts to check data integrity and model drift.
 - **Docker**: Containerization of the API and Services.
 
 ## Structure
-- `app/`: FastAPI application (`main.py`).
+- `app/`: FastAPI application (`main.py`) and Web UI (`static/`).
 - `ml/`: Machine Learning scripts:
     - `train_models.py`: Generates synthetic data and trains 3 models.
     - `validate.py`: Checks for data integrity and drift.

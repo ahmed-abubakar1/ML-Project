@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediMind | AI Healthcare Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="background-orb orb-1"></div>
+    <div class="background-orb orb-2"></div>
+
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <h1>MediMind <span class="badge">AI PRO</span></h1>
+            </div>
+            <p class="subtitle">Advanced Multi-Model Healthcare Intelligence System</p>
+        </header>
+
+        <main>
+            <section class="input-panel glass-card">
+                <h2><span class="icon">👤</span> Patient Vitals</h2>
+                <form id="analysis-form">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="age">Age (years)</label>
+                            <input type="number" id="age" name="age" placeholder="e.g. 45" required min="0" max="120" value="45">
+                        </div>
+                        <div class="input-group">
+                            <label for="bmi">BMI Index</label>
+                            <input type="number" id="bmi" name="bmi" placeholder="e.g. 24.5" required step="0.1" value="28.5">
+                        </div>
+                        <div class="input-group">
+                            <label for="blood_pressure">Blood Pressure (mmHg)</label>
+                            <input type="number" id="blood_pressure" name="blood_pressure" placeholder="e.g. 120" required value="130">
+                        </div>
+                        <div class="input-group">
+                            <label for="glucose">Glucose Level (mg/dL)</label>
+                            <input type="number" id="glucose" name="glucose" placeholder="e.g. 95" required value="105">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="cta-button" id="analyze-btn">
+                        <span class="btn-text">Run Comprehensive Analysis</span>
+                        <div class="loader" id="btn-loader"></div>
+                    </button>
+                </form>
+            </section>
+
+            <section class="results-grid">
+                <!-- Result 1: Classification -->
+                <div class="result-card glass-card" id="card-heart">
+                    <div class="card-header">
+                        <h3>Heart Disease Risk</h3>
+                        <div class="model-tag">Classification</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="status-indicator" id="heart-status">
+                            <div class="pulse-ring"></div>
+                            <span class="status-text">Ready</span>
+                        </div>
+                        <div class="metric-display">
+                            <span class="label">Probability</span>
+                            <span class="value" id="heart-prob">--%</span>
+                        </div>
+                        <div class="prediction-msg" id="heart-msg">Awaiting input...</div>
+                    </div>
+                </div>
+
+                <!-- Result 2: Regression -->
+                <div class="result-card glass-card" id="card-cost">
+                    <div class="card-header">
+                        <h3>Est. Hospital Cost</h3>
+                        <div class="model-tag">Regression</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="icon-display">💰</div>
+                        <div class="metric-display large">
+                            <span class="value" id="cost-value">$0</span>
+                        </div>
+                        <div class="prediction-msg">Projected annual expense based on vitals.</div>
+                    </div>
+                </div>
+
+                <!-- Result 3: Clustering -->
+                <div class="result-card glass-card" id="card-cluster">
+                    <div class="card-header">
+                        <h3>Patient Segment</h3>
+                        <div class="model-tag">Clustering</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="cluster-visual" id="cluster-visual">
+                            <div class="dot d1"></div>
+                            <div class="dot d2"></div>
+                            <div class="dot d3"></div>
+                        </div>
+                        <div class="metric-display">
+                            <span class="label">Group ID</span>
+                            <span class="value" id="cluster-id">--</span>
+                        </div>
+                        <div class="prediction-msg" id="cluster-desc">Similar profile grouping.</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script src="/static/script.js"></script>
+</body>
+</html>

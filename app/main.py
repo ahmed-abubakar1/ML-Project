@@ -1,4 +1,6 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import joblib
 import pandas as pd
@@ -6,6 +8,9 @@ import numpy as np
 import os
 
 app = FastAPI(title="Healthcare ML System", version="1.0.0")
+
+# Mount Static Files
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 # Load models if they exist
 MODELS = {}
@@ -33,7 +38,7 @@ class PatientData(BaseModel):
 
 @app.get("/")
 def read_root():
-    return {"message": "Healthcare Prediction API Ready"}
+    return FileResponse('app/static/index.html')
 
 @app.post("/predict/heart-disease")
 def predict_heart_disease(patient: PatientData):
