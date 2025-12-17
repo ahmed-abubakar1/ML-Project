@@ -69,23 +69,44 @@ def train_models():
     y_class = df['heart_disease']
     y_reg = df['hospital_cost']
     
-    # 1. Classification Model
-    print("Training Classification Model...")
-    clf = RandomForestClassifier(n_estimators=100, random_state=42)
-    clf.fit(X, y_class)
-    joblib.dump(clf, "models/heart_disease_model.pkl")
+    # Advanced Model Training with Pipelines (Handling Scaling Automatically)
+    from sklearn.pipeline import make_pipeline
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor
+    from sklearn.cluster import KMeans
+    from sklearn.metrics import accuracy_score, mean_absolute_error, silhouette_score
+
+    # 1. Classification Model (Gradient Boosting is often more accurate than RF)
+    print("Training Enhanced Classification Model (Gradient Boosting)...")
+    clf_pipeline = make_pipeline(StandardScaler(), GradientBoostingClassifier(n_estimators=200, learning_rate=0.1, max_depth=3, random_state=42))
+    clf_pipeline.fit(X, y_class)
+    
+    # Evaluate
+    acc = accuracy_score(y_class, clf_pipeline.predict(X))
+    print(f"Classification Accuracy (Training): {acc:.4f}")
+    
+    joblib.dump(clf_pipeline, "models/heart_disease_model.pkl")
     
     # 2. Regression Model
-    print("Training Regression Model...")
-    reg = RandomForestRegressor(n_estimators=100, random_state=42)
-    reg.fit(X, y_reg)
-    joblib.dump(reg, "models/cost_prediction_model.pkl")
+    print("Training Enhanced Regression Model...")
+    reg_pipeline = make_pipeline(StandardScaler(), GradientBoostingRegressor(n_estimators=200, random_state=42))
+    reg_pipeline.fit(X, y_reg)
     
-    # 3. Clustering (Unsupervised)
-    print("Training Clustering Model...")
-    kmeans = KMeans(n_clusters=3, random_state=42)
-    kmeans.fit(X)
-    joblib.dump(kmeans, "models/patient_cluster_model.pkl")
+    # Evaluate
+    mae = mean_absolute_error(y_reg, reg_pipeline.predict(X))
+    print(f"Regression MAE: ${mae:.2f}")
+    
+    joblib.dump(reg_pipeline, "models/cost_prediction_model.pkl")
+    
+    # 3. Clustering (Unsupervised) - Scaling is CRITICAL for K-Means
+    print("Training Scaled Clustering Model...")
+    cluster_pipeline = make_pipeline(StandardScaler(), KMeans(n_clusters=3, random_state=42))
+    cluster_pipeline.fit(X)
+    
+    score = silhouette_score(X, cluster_pipeline.predict(X))
+    print(f"Clustering Silhouette Score: {score:.4f}")
+    
+    joblib.dump(cluster_pipeline, "models/patient_cluster_model.pkl")
     
     print("Models saved in 'models/' directory.")
 
