@@ -9,8 +9,12 @@ import os
 
 app = FastAPI(title="Healthcare ML System", version="1.0.0")
 
+# Robust Path Resolution
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+
 # Mount Static Files
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # Load models if they exist
 MODELS = {}
@@ -21,6 +25,7 @@ MODEL_PATHS = {
 }
 
 def load_models():
+    # Use CWD for models or fix paths similarly if needed, but keeping simple for now
     for name, path in MODEL_PATHS.items():
         if os.path.exists(path):
             MODELS[name] = joblib.load(path)
@@ -38,7 +43,11 @@ class PatientData(BaseModel):
 
 @app.get("/")
 def read_root():
-    return FileResponse('app/static/index.html')
+    return FileResponse(os.path.join(STATIC_DIR, 'index.html'))
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
 
 @app.post("/predict/heart-disease")
 def predict_heart_disease(patient: PatientData):

@@ -25,7 +25,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          # pytest tests/   <-- Uncomment when tests are added
+          pytest tests/
           echo "Running tests..."
 
       - name: Linting

@@ -8,6 +8,8 @@ deepchecks
 pytest
 httpx
 python-multipart
+# aiofiles needed for FileResponse
+aiofiles
 scipy
 joblib
 matplotlib
