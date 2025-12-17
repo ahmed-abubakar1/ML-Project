@@ -10,29 +10,55 @@ import os
 os.makedirs("data", exist_ok=True)
 os.makedirs("models", exist_ok=True)
 
-def generate_synthetic_data(n_samples=1000):
-    np.random.seed(42)
-    # Synthetic Healthcare Data
-    # Age, BMI, BloodPressure, Glucose, SufferHeartDisease (Target 1), HospitalCost (Target 2)
+def generate_synthetic_data():
+    print("Fetching 'Live' data from remote source...")
+    # Using Pima Indians Diabetes Dataset as a real-world proxy for health vitals
+    # Source: https://github.com/npradaschnor/Pima-Indians-Diabetes-Dataset
+    url = "https://raw.githubusercontent.com/npradaschnor/Pima-Indians-Diabetes-Dataset/master/diabetes.csv"
     
-    data = {
-        'age': np.random.randint(20, 90, n_samples),
-        'bmi': np.random.normal(25, 5, n_samples),
-        'blood_pressure': np.random.normal(120, 15, n_samples),
-        'glucose': np.random.normal(100, 20, n_samples),
-    }
-    df = pd.DataFrame(data)
+    try:
+        df = pd.read_csv(url)
+        print("Data fetched successfully.")
+    except Exception as e:
+        print(f"Failed to fetch data: {e}. Falling back to synthetic.")
+        # Fallback (simplified)
+        return pd.DataFrame({
+            'age': np.random.randint(20, 90, 100), 'bmi': np.random.normal(25, 5, 100),
+            'blood_pressure': np.random.normal(120, 15, 100), 'glucose': np.random.normal(100, 20, 100),
+            'heart_disease': np.random.randint(0, 2, 100), 'hospital_cost': np.random.normal(5000, 1000, 100)
+        })
+
+    # Map real columns to our schema
+    # Dataset cols: Pregnancies,Glucose,BloodPressure,SkinThickness,Insulin,BMI,DiabetesPedigreeFunction,Age,Outcome
+    df_clean = df.rename(columns={
+        'Age': 'age',
+        'BMI': 'bmi',
+        'BloodPressure': 'blood_pressure',
+        'Glucose': 'glucose',
+        'Outcome': 'heart_disease' # Using Diabetes Outcome as our Disease Target
+    })
     
-    # Target 1: Classification (Heart Disease)
-    # Simple logic: Age > 50 and BMI > 30 increases risk
-    risk_score = (df['age'] / 90) + (df['bmi'] / 40) + np.random.normal(0, 0.1, n_samples)
-    df['heart_disease'] = (risk_score > 1.2).astype(int)
+    # Select only relevant features
+    df_clean = df_clean[['age', 'bmi', 'blood_pressure', 'glucose', 'heart_disease']]
     
-    # Target 2: Regression (Hospital Cost)
-    # Cost correlated with Age and some random noise
-    df['hospital_cost'] = 1000 + (df['age'] * 50) + (df['heart_disease'] * 5000) + np.random.normal(0, 500, n_samples)
+    # Handle zeros which are effectively missing values in this dataset (e.g. BP=0)
+    cols_to_fix = ['bmi', 'blood_pressure', 'glucose']
+    for col in cols_to_fix:
+        df_clean[col] = df_clean[col].replace(0, df_clean[col].mean())
+
+    # Generate Synthetic Cost Target (since it's not in the dataset)
+    # Cost correlated with Age and Disease Status
+    n_samples = len(df_clean)
+    noise = np.random.normal(0, 500, n_samples)
     
-    return df
+    df_clean['hospital_cost'] = (
+        1000 + 
+        (df_clean['age'] * 50) + 
+        (df_clean['heart_disease'] * 5000) + 
+        noise
+    )
+    
+    return df_clean
 
 def train_models():
     print("Generating data...")
